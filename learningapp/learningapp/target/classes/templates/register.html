@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        /* Add your CSS styles here */
+        body { font-family: Arial, sans-serif; }
+        .container { width: 300px; margin: 100px auto; text-align: center; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; background-color: teal; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Fill Your details to register</h2>
+    <input type="text" id="fullName" placeholder="Enter Your Full Name">
+    <select id="education">
+        <option value="SSC">SSC</option>
+        <option value="HSC">HSC</option>
+        <option value="ICSE">ICSE</option>
+    </select>
+    <input type="text" id="email" placeholder="Enter Email">
+    <input type="text" id="mobileNumber" placeholder="Enter Mobile Number">
+    <button onclick="register()">Submit</button>
+</div>
+
+<script>
+    function register() {
+        const fullName = document.getElementById('fullName').value;
+        const education = document.getElementById('education').value;
+        const email = document.getElementById('email').value;
+        const mobileNumber = document.getElementById('mobileNumber').value;
+        fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `fullName=${fullName}&education=${education}&email=${email}&mobileNumber=${mobileNumber}`
+        })
+            .then(response => response.text())
+            .then(data => alert(data));
+    }
+</script>
+
+</body>
+</html>

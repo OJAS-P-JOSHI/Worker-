@@ -1,14 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 
 const HomeScreen = () => {
-
+    const navigation = useNavigation();
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style={styles.container}>
+                <TouchableOpacity onPress={() => {navigation.navigate("CustomerDetails")}}>
                 <Text>Home Screen</Text>
-                <Text>Home Screen</Text>
-            </View>            
+                </TouchableOpacity>                             
+            </View>           
         </ScrollView>
     )
 }

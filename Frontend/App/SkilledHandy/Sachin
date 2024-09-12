@@ -1,0 +1,159 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import axios from 'axios';
+
+const Stack = createStackNavigator();
+
+const LogoAndTagline = () => (
+  <View style={styles.header}>
+    <Image source={require('C:\Final Year Project\Frontend\images\LiveAI Academy Logo.jpg')} style={styles.logo} />
+    <Text style={styles.tagline}>
+      Illuminate the path to innovation by AI mastery through live classes
+    </Text>
+  </View>
+);
+
+const EmailScreen = ({ navigation }: { navigation: any }) => {
+  const [email, setEmail] = React.useState('');
+
+  const handleGetOTP = async () => {
+    try {
+      const response = await axios.post('https://gemini-pro-r4no.onrender.com/api/user/login', { email });
+      if (response.status === 200) {
+        navigation.navigate('OTPScreen');
+      } else {
+        Alert.alert('Error', 'Failed to send OTP');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to send OTP');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <LogoAndTagline />
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <TouchableOpacity style={styles.button} onPress={handleGetOTP}>
+        <Text style={styles.buttonText}>Get OTP</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const OTPScreen = () => {
+  const [otp, setOtp] = React.useState('');
+  const [resendTimer, setResendTimer] = React.useState(30); // Resend timer in seconds
+
+  const handleVerifyOTP = async () => {
+    try {
+      const response = await axios.post('https://gemini-pro-r4no.onrender.com/api/user/verify', { otp });
+      if (response.status === 200) {
+        Alert.alert('Success', 'OTP verified successfully');
+      } else {
+        Alert.alert('Error', 'Failed to verify OTP');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to verify OTP');
+    }
+  };
+
+  React.useEffect(() => {
+    if (resendTimer > 0) {
+      const interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [resendTimer]);
+
+  return (
+    <View style={styles.container}>
+      <LogoAndTagline />
+      <TextInput
+        style={styles.input}
+        placeholder="Enter OTP"
+        value={otp}
+        onChangeText={setOtp}
+        keyboardType="numeric"
+        maxLength={6}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleVerifyOTP}>
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
+      <Text style={styles.resendText}>
+        Resend OTP in {resendTimer} seconds
+      </Text>
+    </View>
+  );
+};
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="EmailScreen">
+        <Stack.Screen name="EmailScreen" component={EmailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="OTPScreen" component={OTPScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  logo: {
+    width: 300,
+    height: 300,
+    marginBottom: 20,
+  },
+  tagline: {
+    fontSize: 25,
+    color: '#3373AB',
+    textAlign: 'center',
+    marginTop: 30,
+    marginBottom: 40,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 30,
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#328EBA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  resendText: {
+    marginTop: 20,
+    color: 'gray',
+  },
+});
